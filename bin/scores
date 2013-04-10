@@ -12,11 +12,11 @@ require 'string'
 require 'clscores'
 
 opts = Trollop::options do
-  opt :today, "Get scores for today's games"
-  opt :yesterday, "Get scores for yesterday's games (default)"
+  opt :today, "Get scores for today's games (default)"
+  opt :yesterday, "Get scores for yesterday's games"
   opt :date, "Get scores for specified date", type: :string
-  opt :box, "Get box score for specified team", type: :string
-  opt :short, "Omit innings from score summaries"
+  # opt :box, "Get box score for specified team", type: :string
+  opt :short, "Show short version of scores (score, inning, outs)"
   opt :highlight, "Highlight teams", type: :string
   opt :only, "Show only the specified teams", type: :string
   opt :sort, "Sort future games by start time"
@@ -30,12 +30,15 @@ games = []
 
 doc.css('div.mod-scorebox').each do |game|
   new_game = CLScores::Game.new(game, settings)
-  if settings.only.nil? || (settings.only & new_game.teams.values).any?
+  if settings.only.nil? || (settings.only & new_game.teams).any?
     games << new_game
   end
 end
 
-sort_order = [:in_progress, :final, :delayed, :future]
+message = "\nScores/Schedule for #{settings.date("%B %-e, %Y")}"
+puts message, '-' * (message.length - 1)
+
+sort_order = [:in_progress, :final, :delayed, :postponed, :future]
 if settings.sort
   games.sort_by{|game| [sort_order.index(game.status), game.time]}.each { |game| game.summary }
 else

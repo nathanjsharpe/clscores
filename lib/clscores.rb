@@ -74,7 +74,7 @@ module CLScores
   end
 
   class Game
-    attr_reader :status, :teams
+    attr_reader :status
 
     def initialize(game_box, settings)
       @settings = settings
@@ -106,6 +106,8 @@ module CLScores
         :future
       when /Delayed/
         :delayed
+      when /Postponed/
+        :postponed
       else
         @inning = game_status
         @outs = game_box.css('div.game-info-module ul.game_stats:nth-child(2) li.first img').select{|img| img['src'][/circle_on/]}.size
@@ -122,16 +124,20 @@ module CLScores
       Time.parse(@game_time || "0:00")
     end
 
+    def teams
+      @teams.map { |k, team| team.abbr }
+    end
+
     def summary
       puts "\n"
-      if @status == :future || @status == :delayed
-        puts "#{@teams[:away]} @ #{@teams[:home]}".pad(10) + "| #{@game_time || "Delayed"}"
+      if @status == :future || @status == :delayed || @status == :postponed
+        puts "#{@teams[:away]} @ #{@teams[:home]}".pad(10) + "| #{@game_time || @status.to_s.capitalize}"
       elsif @settings.short
         [:away, :home].each do |status|
           print @teams[status].pad(4) + @score[status].pad(3)
           if status == :away
             puts @inning || "F"
-          elsif @status == :in_progress and !@inning[/Mid/]
+          elsif @status == :in_progress and (@inning[/Top/] || @inning[/Bot/])
             puts "#{@outs} Outs" # , #{@runners} On"
           else
             puts "\n"
