@@ -6,7 +6,7 @@ Options
 -------
 <table>
   <tr>
-    <td>
+    <td style="width:130px">
       -t,<br>
       --today
     </td>
