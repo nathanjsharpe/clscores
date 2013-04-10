@@ -110,7 +110,9 @@ module CLScores
         :postponed
       else
         @inning = game_status
-        @outs = game_box.css('div.game-info-module ul.game_stats:nth-child(2) li.first img').select{|img| img['src'][/circle_on/]}.size
+        @outs = "0 Outs"
+        @outs = "1 Out" if game_box.at_css("##{@id}-out-1")["src"][/circle_on/]
+        @outs = "2 Outs" if game_box.at_css("##{@id}-out-2")["src"][/circle_on/]
         @runners = game_box.css('span.baseball-diamond-img').first["class"][/\d+/].scan(/1/).size
         :in_progress
       end
@@ -138,7 +140,7 @@ module CLScores
           if status == :away
             puts @inning || "F"
           elsif @status == :in_progress and (@inning[/Top/] || @inning[/Bot/])
-            puts "#{@outs} Outs" # , #{@runners} On"
+            puts @outs # , #{@runners} On"
           else
             puts "\n"
           end

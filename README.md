@@ -1,6 +1,6 @@
 CLScores
 ========
-A small project to fetch MLB scores from a Unix command line by scraping the ESPN MLB scoreboard.
+A small Ruby project to fetch MLB scores from the Unix command line by scraping the ESPN MLB scoreboard.
 
 Options
 -------
