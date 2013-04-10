@@ -1,1 +1,9 @@
+# Highlight teams by specifying the colors to use. Colors can be specified by name or by hex value.
+# 
+# For example:
+# stl: red
+# cin: blue
+# nyy: 802A2A
+# would highlight STL in red, CIN in blue, and NYY in brown (as in the color of shit).
+
 stl: red

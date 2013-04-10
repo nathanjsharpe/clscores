@@ -1,10 +1,10 @@
-class String
+class Object
   def pad(target_length)
-    string = self.gsub(/\e\[(\d+)m/, '')
+    string = self.to_s.gsub(/\e\[(\d+)m/, '')
     if string.length > target_length
-      self
+      self.to_s
     else
-      self + (" " * (target_length - string.length)) 
+      self.to_s + (" " * (target_length - string.length)) 
     end
   end
 end
