@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require 'open-uri'
+require 'nokogiri'
+require 'time'
+require 'rainbow'
+require 'active_support/all'
+require 'trollop'
+require 'yaml'
+
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+require 'string'
+require 'clscores'
+
+opts = Trollop::options do
+  opt :today, "Get scores for today's games"
+  opt :yesterday, "Get scores for yesterday's games (default)"
+  opt :date, "Get scores for specified date", type: :string
+  opt :box, "Get box score for specified team", type: :string, short: "-b"
+  opt :short, "Omit innings from score summaries", short: "-s"
+end
+
+settings = CLScores::Settings.new(opts)
+
+doc = Nokogiri::HTML(open("#{settings.base_url}?date=#{settings.date}"))
+
+games = []
+
+doc.css('div.mod-scorebox').each do |game|
+  games << CLScores::Game.new(game)
+end
+
+games.each { |game| game.summary }
+puts "\n"
